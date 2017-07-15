@@ -23,14 +23,16 @@ for line in cf:
 	m = float(a[5])
 	calculated.append(m/dt*60)
 	#datarray = [event.channels for event in f.tree if event.time > timestamp and event.time < timestamp + dt]
-	datarray = []
+	datarray = [[] for x in range(3)]
 	for event in f.tree:
 		if event.time > timestamp and event.time < timestamp + dt:
-			print(str(event.time)+'\t'+str(event.channels[3])+'\t'+str(dt))
-			datarray.append(event.channels)	
-	transducer.append(sum([x[5] for x in datarray])/len(datarray))
-	currentLoop.append(sum([x[1] for x in datarray])/len(datarray))	
-	countDeriv.append(sum([x[3] for x in datarray])/len(datarray))
+			#print(str(event.time)+'\t'+str(event.channels[2])+'\t'+str(dt))
+			datarray[0].append(event.channels[1])
+			datarray[1].append(event.channels[3])
+			datarray[2].append(event.channels[5])	
+	currentLoop.append(sum(datarray[0])/len(datarray[0]))
+	countDeriv.append(sum(datarray[1])/len(datarray[1]))
+	transducer.append(sum(datarray[2])/len(datarray[2]))
 	sotera.append(float(a[4]))
 	f.Close()
 #m = [np.polyfit(x,calculated,1) for x in [transducer,currentLoop,countDeriv,sotera]]
