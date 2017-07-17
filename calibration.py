@@ -18,11 +18,16 @@ for line in cf:
 	f = TFile.Open('out'+run+'.root','read')
 	start = a[1]+' '+a[2]
 	timestamp = time.mktime(datetime.datetime.strptime(start, '%m/%d/%Y %H:%M:%S').timetuple())
-	timestamp += int(sys.argv[1])
+	#timestamp += int(sys.argv[1]) #temporary to test time offset
 	dt  = float(a[6])
 	m = float(a[5])
 	calculated.append(m/dt*60)
-	datarray = [event.channels for event in f.tree if event.time > timestamp and event.time < timestamp + dt]
+	#datarray = [event.channels for event in f.tree if event.time > timestamp and event.time < timestamp + dt]
+	datarray = []
+	for event in f.tree:
+		if event.time > timestamp and event.time < timestamp + dt:
+			print(str(event.time)+'\t'+str(event.channels[3])+'\t'+str(dt))
+			datarray.append(event.channels)	
 	transducer.append(sum([x[5] for x in datarray])/len(datarray))
 	currentLoop.append(sum([x[1] for x in datarray])/len(datarray))	
 	countDeriv.append(sum([x[3] for x in datarray])/len(datarray))
@@ -33,7 +38,6 @@ for line in cf:
 #print('Measurement\t| m\t| b')
 #names=['Transducer','Current Loop','Counter','Sotera']
 #for cn,n in enumerate(names): print(n+'\t| '+str(m[cn][0]) +'\t| '+ str(m[cn,1]))
-print(countDeriv)
 plt.figure(1)
 plt.subplot(221)
 plt.plot(transducer,calculated,'.')
